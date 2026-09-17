@@ -1,0 +1,54 @@
+project:
+  name: d8
+  output_dir: ../results/d8
+  random_seed: 14
+input:
+  h5ad: ${JOINT_DATA_ROOT}/adatas/d8.h5ad
+  laser_image: ${JOINT_DATA_ROOT}/pics/08/white.jpeg
+  cell_segmentation: ${JOINT_DATA_ROOT}/segementation_d8/segmentation_cell_raw_08.pkl
+  trusted_pickle: true
+preprocessing:
+  backend: python
+  normalization: none
+  min_occurrence: 0.0
+laser_segmentation:
+  method: simulated
+  radius: 18
+  expected_rows: 41
+  parameters:
+    include_rectangle: [1200, 1300, 4350, 4350]
+    intensity_cutoff: 0.2
+    top_hat_mode: legacy_opening
+    top_hat_radius: 1
+    closing_size: 10
+    post_closing_size: 10
+    opening_size: 1
+    min_peak_distance: 20
+    peak_detection_mode: legacy_global
+    marker_connectivity: 1
+    min_size: 1
+    row_detection:
+      method: rolling_variance
+      window_size: 5
+      variance_threshold: 50.0
+      thinning: 4
+registration:
+  orientation: identity
+  edge_policy: error
+quantification:
+  method: specificity_filtered
+  boundary_margin: 20
+  unique_min_overlap: 0.0
+  dominant_min_overlap: 0.6
+  secondary_max_overlap: 0.15
+analysis:
+  cosg:
+    enabled: true
+    groupby: cluster
+    n_genes: 20
+  cnmf:
+    enabled: true
+    components: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    selected_k: 14
+    seed: 14
+    num_highvar_genes: 300

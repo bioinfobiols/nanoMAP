@@ -1,0 +1,45 @@
+project:
+  name: d2
+  output_dir: ../results/d2
+  random_seed: 14
+input:
+  h5ad: ${JOINT_DATA_ROOT}/adatas/d2.h5ad
+  laser_image: ${JOINT_DATA_ROOT}/pics/02/white.jpeg
+  cell_segmentation: ${JOINT_DATA_ROOT}/segementation_d2/segmentation_cell_raw.pkl
+  trusted_pickle: true
+preprocessing:
+  backend: python
+  normalization: none
+  min_occurrence: 0.0
+laser_segmentation:
+  method: real
+  expected_rows: 40
+  merge_rules: d2-merges.csv
+  parameters:
+    include_rectangle: [1250, 1250, 3650, 3750]
+    intensity_cutoff: 0.2
+    top_hat_mode: legacy_opening
+    top_hat_radius: 1
+    closing_size: 5
+    post_closing_size: 1
+    opening_size: 3
+    min_peak_distance: 25
+    peak_detection_mode: legacy_global
+    marker_connectivity: 2
+    min_size: 30
+    row_detection:
+      method: rolling_variance
+      window_size: 5
+      variance_threshold: 50.0
+      thinning: 4
+    exclusion:
+      min_column: 1610
+registration:
+  orientation: identity
+  edge_policy: truncate_left
+quantification:
+  method: legacy_proportional
+  boundary_margin: 50
+analysis:
+  cosg: {enabled: false}
+  cnmf: {enabled: false}

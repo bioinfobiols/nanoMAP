@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "joint-msi"
+version = "0.1.0"
+description = "Joint spatial MSI, laser-mark, and single-cell metabolomics analysis"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "anndata>=0.10",
+  "igraph>=0.11",
+  "leidenalg>=0.10",
+  "matplotlib>=3.8",
+  "numba>=0.60,<0.62",
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "pydantic>=2.7",
+  "pyimzml>=1.5",
+  "pyyaml>=6.0",
+  "scanpy>=1.10",
+  "scikit-bio>=0.6",
+  "scikit-image>=0.22",
+  "scikit-learn>=1.4",
+  "scipy>=1.11",
+  "typer>=0.12",
+]
+
+[project.scripts]
+joint = "joint.cli:app"
+
+[project.optional-dependencies]
+test = ["pytest>=8.0", "ruff>=0.6", "build>=1.2", "nbformat>=5.10", "nbclient>=0.10", "ipykernel>=6.29"]
+cardinal = []
+cosg = ["cosg>=1.0"]
+cnmf = ["cnmf>=1.3"]
+trajectory = ["pygam>=0.9"]
+all = ["cosg>=1.0", "cnmf>=1.3", "pygam>=0.9"]
+
+[tool.hatch.build]
+include = ["src/joint/**/*.py", "src/joint/backends/*.R", "configs/*.yaml", "configs/*.csv", "docs/cardinal.md", "examples/joint_quickstart.ipynb"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/joint", "configs", "docs/cardinal.md", "examples/joint_quickstart.ipynb", "README.md", "pyproject.toml"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/joint"]
+force-include = {"configs" = "joint/resources/configs", "docs/cardinal.md" = "joint/resources/docs/cardinal.md", "examples/joint_quickstart.ipynb" = "joint/resources/examples/joint_quickstart.ipynb"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = ["regression: requires the external d2/d8 reference data"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
