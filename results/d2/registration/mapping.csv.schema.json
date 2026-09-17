@@ -1,0 +1,155 @@
+{
+  "format": "joint-pipeline-json-v1",
+  "value": {
+    "__joint_json_type__": "mapping",
+    "items": [
+      [
+        "columns",
+        [
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "str"
+              ],
+              [
+                "name",
+                "pixel_id"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "int64"
+              ],
+              [
+                "name",
+                "label"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "float64"
+              ],
+              [
+                "name",
+                "area"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "float64"
+              ],
+              [
+                "name",
+                "centroid-0"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "float64"
+              ],
+              [
+                "name",
+                "centroid-1"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "object"
+              ],
+              [
+                "name",
+                "seg_label"
+              ],
+              [
+                "object_kind",
+                "string"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "object"
+              ],
+              [
+                "name",
+                "morphology"
+              ],
+              [
+                "object_kind",
+                "string"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "int64"
+              ],
+              [
+                "name",
+                "row_number"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "int64"
+              ],
+              [
+                "name",
+                "column_number"
+              ]
+            ]
+          },
+          {
+            "__joint_json_type__": "mapping",
+            "items": [
+              [
+                "dtype",
+                "int64"
+              ],
+              [
+                "name",
+                "right_to_left"
+              ]
+            ]
+          }
+        ]
+      ],
+      [
+        "format",
+        "joint-pipeline-csv-v1"
+      ]
+    ]
+  }
+}
