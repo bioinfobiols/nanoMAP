@@ -23,7 +23,7 @@ locate them, copy the files into your working directory, and update their input 
 ```python
 from importlib.resources import files
 
-print(files("joint").joinpath("resources/configs/d8.yaml"))
+print(files("joint").joinpath("resources/configs/d2.yaml"))
 print(files("joint").joinpath("resources/examples/joint_quickstart.ipynb"))
 ```
 
@@ -33,13 +33,11 @@ print(files("joint").joinpath("resources/examples/joint_quickstart.ipynb"))
 export JOINT_DATA_ROOT=/path/to/nanoMAP_figures/Figure5/5A-C
 ```
 
-`configs/d2.yaml` and `configs/d8.yaml` read existing `.h5ad` MSI data and reproduce the
-notebook workflows. `configs/d2-raw.yaml` and `configs/d8-raw.yaml` start from raw imZML/ibd
-data and run preprocessing again. The four configurations write results to their respective
-`project.output_dir` values (by default, `results/d2`, `results/d8`, `results/d2-raw`, and
-`results/d8-raw`). Each output directory contains `preprocessing`, `segmentation`,
-`registration`, `quantification`, and any enabled downstream stages, plus `joint-final.h5ad` at
-the root.
+`configs/d2.yaml` reads existing `.h5ad` MSI data and reproduce the notebook workflows. `configs/d2-raw.yaml`
+starts from raw imZML/ibd data and run preprocessing again. The four configurations write results to their respective
+`project.output_dir` values (by default, `results/d2` and `results/d2-raw`). Each output directory contains 
+`preprocessing`, `segmentation`,`registration`, `quantification`, and any enabled downstream stages,
+plus `joint-final.h5ad` at the root.
 
 ### Real d2 reference run
 
@@ -60,7 +58,7 @@ The completed run produces 1,480 registered laser observations, 2,936 segmented 
 ## Command Line
 
 ```bash
-joint run --config configs/d8.yaml
+joint run --config configs/d2.yaml
 joint quantify --config configs/d2.yaml --resume
 ```
 
@@ -68,48 +66,7 @@ joint quantify --config configs/d2.yaml --resume
 interruption or when running a downstream command. `--overwrite` explicitly permits existing
 stage artifacts to be regenerated; do not use it when existing results must be preserved.
 
-## Synthetic demonstration data
 
-The repository includes a reproducible 32×32 demonstration fixture with 1,024 MSI observations,
-ten m/z features, a laser image, and four synthetic cell regions. It is intended for installation
-checks and pipeline smoke tests, not as a scientific benchmark.
-The fixture contains `synthetic_demo.h5ad` and the matching `synthetic_demo.imzML`/`synthetic_demo.ibd`
-pair.
-
-Regenerate the fixture when needed:
-
-```bash
-.venv/bin/python tests/data/synthetic_demo/generate_dataset.py \
-  --output-dir tests/data/synthetic_demo \
-  --seed 20260912 \
-  --overwrite
-```
-
-Run the complete workflow from the preprocessed h5ad input:
-
-```bash
-joint run --config tests/data/synthetic_demo/configs/synthetic-h5ad.yaml \
-  --overwrite
-```
-
-Run the same workflow from the raw imzML/ibd pair:
-
-```bash
-joint run --config tests/data/synthetic_demo/configs/synthetic-imzml.yaml \
-  --overwrite
-```
-
-The configurations write to `results/synthetic-h5ad` and `results/synthetic-imzml` respectively.
-Each run records `manifest.json`, `logs/joint.log`, and stage artifacts such as
-`preprocessing/msi.h5ad`, `segmentation/laser_labels.npy`, `registration/laser.h5ad`, and
-`quantification/cells.h5ad`. The same workflow is available from Python:
-
-```python
-from joint import JointPipeline
-
-pipeline = JointPipeline.from_config("tests/data/synthetic_demo/configs/synthetic-h5ad.yaml")
-result = pipeline.run(resume=True, overwrite=False)
-```
 
 ## Quantification Methods
 
@@ -124,7 +81,7 @@ Select either method with `quantification.method`.
 ```python
 from joint import JointPipeline
 
-pipeline = JointPipeline.from_config("configs/d8.yaml")
+pipeline = JointPipeline.from_config("configs/d2.yaml")
 result = pipeline.run(resume=True)
 ```
 
