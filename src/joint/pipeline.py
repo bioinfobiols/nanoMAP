@@ -1232,41 +1232,6 @@ def _segment_from_config(config: JointConfig, msi: anndata.AnnData) -> Segmentat
     parameters.pop("include_rectangle", None)
     row_parameters = parameters.pop("row_detection", {})
     exclusion = parameters.pop("exclusion", {})
-    grid_simulation = parameters.pop("grid_simulation", None)
-    if config.laser_segmentation.method == "simulated" and grid_simulation == "full_grid":
-        image_shape = image.shape[:2]
-        if len(image_shape) != 2 or 0 in image_shape:
-            raise JointError("Full-grid laser simulation requires a non-empty 2D image")
-        if config.laser_segmentation.expected_rows not in {None, image_shape[0]}:
-            raise JointError(
-                "Full-grid laser simulation expected_rows must match the laser image height"
-            )
-        if "spatial" not in msi.obsm:
-            raise JointError("Full-grid laser simulation requires msi.obsm['spatial']")
-        spatial = np.asarray(msi.obsm["spatial"])
-        x_values = np.unique(spatial[:, 0])
-        y_values = np.unique(spatial[:, 1])
-        if spatial.shape != (msi.n_obs, 2) or spatial.shape[0] != x_values.size * y_values.size:
-            raise JointError("Full-grid laser simulation requires a complete rectangular MSI grid")
-        if (x_values.size, y_values.size) != (image_shape[1], image_shape[0]):
-            raise JointError(
-                "Full-grid laser simulation requires image dimensions to match the MSI grid"
-            )
-        anchors = [
-            pd.DataFrame(
-                {
-                    "centroid-0": [float(row), float(row)],
-                    "centroid-1": [0.0, float(image_shape[1] - 1)],
-                }
-            )
-            for row in range(image_shape[0])
-        ]
-        return simulate_laser_marks(
-            msi,
-            anchors,
-            image_shape,
-            radius=config.laser_segmentation.radius,
-        )
     segmented = segment_laser_marks(image, mask=mask, **parameters)
     rows = detect_rows(
         segmented.regions,

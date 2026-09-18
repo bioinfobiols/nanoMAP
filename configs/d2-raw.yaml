@@ -3,10 +3,9 @@ project:
   output_dir: ../results/d2-raw
   random_seed: 14
 input:
-  imzml: ${JOINT_DATA_ROOT}/rawdata/02.imzML
-  laser_image: ${JOINT_DATA_ROOT}/pics/02/white.jpeg
-  cell_segmentation: ${JOINT_DATA_ROOT}/segementation_d2/segmentation_cell_raw.pkl
-  trusted_pickle: true
+  imzml: ../data/d2/rawdata/02.imzML
+  laser_image: ../data/d2/pics/02/white.jpeg
+  cell_segmentation: ../data/d2/segementation_d2/segmentation_cell_raw.npz
 preprocessing:
   backend: python
   normalization: rms

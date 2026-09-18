@@ -113,6 +113,7 @@ def read_h5ad(path: str | Path) -> anndata.AnnData:
 def read_segmentation(path: str | Path, *, trusted_pickle: bool = False) -> np.ndarray:
     """Read a two-dimensional integer segmentation label array.
 
+    NPZ inputs must contain exactly one array named ``labels`` and never use pickle.
     Pickle inputs require explicit caller authorization because deserialization can
     execute arbitrary code.
     """
@@ -123,6 +124,11 @@ def read_segmentation(path: str | Path, *, trusted_pickle: bool = False) -> np.n
     try:
         if source.suffix == ".npy":
             labels = np.load(source, allow_pickle=False)
+        elif source.suffix == ".npz":
+            with np.load(source, allow_pickle=False) as archive:
+                if archive.files != ["labels"]:
+                    raise InputFormatError("NPZ segmentation must contain only a 'labels' array")
+                labels = archive["labels"]
         elif source.suffix in {".pkl", ".pickle"}:
             if not trusted_pickle:
                 raise InputFormatError("Pickle segmentation requires trusted_pickle=True")
