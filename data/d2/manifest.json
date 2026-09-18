@@ -1,0 +1,52 @@
+{
+  "dataset": "d2",
+  "kind": "real experimental reference data",
+  "files": {
+    "adatas/d2.h5ad": {
+      "bytes": 3902540,
+      "sha256": "31677d34d5ceb31682fb3e60e431ab8348f51c001930de56972a59fb9e7b3843",
+      "source": "nanoMAP_figures/Figure5/5A-C/adatas/d2.h5ad",
+      "conversion": "Byte-identical copy."
+    },
+    "pics/02/white.jpeg": {
+      "bytes": 6667935,
+      "sha256": "6a31d00b8165f55e1aee61e76fed12126d58c5c71dca9e8e2c1442540a522f97",
+      "source": "nanoMAP_figures/Figure5/5A-C/pics/02/white.jpeg",
+      "conversion": "Byte-identical copy."
+    },
+    "rawdata/02.imzML": {
+      "bytes": 4018883,
+      "sha256": "8507131c9fe11efb16322b366c58fa3fd371b358526f8dc587676b2e1e8a2cdd",
+      "source": "nanoMAP_figures/Figure5/5A-C/rawdata/02.imzML",
+      "conversion": "Byte-identical copy."
+    },
+    "rawdata/02.ibd": {
+      "bytes": 16992744,
+      "sha256": "93a664e57b6d01b1bac8c8c5d55177bda60c2cc189d4fd9a102f36960961eab9",
+      "source": "nanoMAP_figures/Figure5/5A-C/rawdata/02.ibd",
+      "conversion": "Byte-identical copy."
+    },
+    "segementation_d2/segmentation_cell_raw.npz": {
+      "bytes": 1796694,
+      "sha256": "834932858b2e35a4829bb968aaa66014a9b34fd4ed9f68611566cb81fa617d07",
+      "source": "nanoMAP_figures/Figure5/5A-C/segementation_d2/segmentation_cell_raw.pkl",
+      "source_sha256": "95ac4450c7a2acb9793c09df144abc8d6b441e5a0c96f523a269bf8c80f15d94",
+      "conversion": "Removed singleton axes from (1,5000,5000,1); lossless NPZ compression. All labels and int64 dtype preserved.",
+      "shape": [
+        5000,
+        5000
+      ],
+      "dtype": "int64",
+      "array_sha256": "719368aa56b28f12a64eb17a08e6c2c8999a2982ba9cd615466319a9dd0b3f97"
+    }
+  },
+  "expected": {
+    "msi_observations": 1760,
+    "raw_laser_regions": 1707,
+    "registered_laser_observations": 1480,
+    "cells": 2936,
+    "features": 360
+  },
+  "provenance": "Inputs supplied by the JOINT project owner from nanoMAP Figure5/5A-C. No synthetic data.",
+  "license": "No separate data license has been supplied; no license grant is asserted by this manifest."
+}
