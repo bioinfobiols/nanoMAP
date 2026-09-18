@@ -7,11 +7,14 @@ R -q -e 'install.packages("BiocManager"); BiocManager::install("Cardinal")'
 Rscript -e 'library(Cardinal); packageVersion("Cardinal")'
 ```
 
-Set `preprocessing.backend: cardinal` in a raw-data configuration, then run:
+Set `preprocessing.backend: cardinal` in `configs/d2-raw.yaml` (which defaults to the Python
+backend), then run:
 
 ```bash
-joint preprocess --config configs/d8-raw.yaml
+joint preprocess --config configs/d2-raw.yaml
 ```
+
+The same backend is available to new compatible raw-data configurations.
 
 JOINT invokes `Rscript` with explicit input and output paths. Cardinal writes a processed
 imZML/ibd pair, and JOINT imports that pair into AnnData using the same coordinate and feature

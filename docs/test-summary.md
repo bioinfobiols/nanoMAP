@@ -1,84 +1,109 @@
-# JOINT test and release verification
+# JOINT d2-only distribution verification
 
-Verified on 2026-09-02 with Python 3.12.13 (`.venv/bin/python --version`). The final runtime
-source baseline is JOINT commit `8b178116ef251582108eade660cdd33fd6b27dc0`.
+Verified on 2026-09-17 with Python 3.12.13 on macOS 13.7.8 (x86_64).
+This report describes the bundled d2 distribution, replacing the earlier
+external-data and synthetic-fixture release workflow.
+
+## Fresh installation
+
+The source was copied into a new temporary directory without Git metadata,
+virtual environments, caches, or results, as for a downloaded GitHub ZIP.
+A new Python 3.12 virtual environment was created without system site packages.
+The following installation resolved dependencies successfully:
+
+```bash
+python -m pip install -c requirements/constraints-py312.txt -e '.[test]'
+python -m pip check
+```
+
+`pip check` reported `No broken requirements found.` Import inspection confirmed
+that JOINT was loaded from the new source copy and Python from the new virtual
+environment. Package downloads used the Python package index and available wheel
+cache; no dependencies were inherited from the development environment.
+
+## Complete real d2 run
+
+With `JOINT_DATA_ROOT` and `JOINT_RUN_ROOT` unset:
+
+```bash
+python scripts/run_d2_demo.py
+```
+
+The command exited successfully from an initially empty output directory. All
+seven stages completed: preprocessing, segmentation, registration, quantification,
+qc, analysis, and final. The final AnnData shape is `(2936, 360)`.
+
+Fresh checks confirmed:
+
+- 1,760 raw MSI observations in the supplied preprocessed reference;
+- 1,707 raw laser regions before exclusions and merges;
+- 1,480 registered laser observations;
+- 2,936 cells and 360 features;
+- exactly 371 actual PNGs matching the figure manifest, with 360 feature maps.
+
+The segmentation overlay was visually inspected. Data checksum verification
+also passed when the runner was called by absolute path from an unrelated working
+directory. No input path depended on the original author's desktop data tree.
+
+The documented raw-input command also completed all seven stages:
+
+```bash
+joint run --config configs/d2-raw.yaml --resume
+```
+
+Its final shape was `(2936, 2411)`. That feature count reflects raw peak alignment
+and normalization and is intentionally separate from the preprocessed 360-feature
+reference. The imzML reader reported correction of the source metadata term
+`pixel size x` to `pixel size (x)`; this did not prevent execution.
 
 ## Automated checks
 
 ```bash
-.venv/bin/python -W error -m pytest -m 'not regression' -q
-.venv/bin/ruff check src tests
-git diff --check
+python -m pytest -q
+python -m ruff check src tests scripts
 ```
 
-The warning-as-error non-regression suite reported **1096 passed, 4 deselected** in 35.59
-seconds. Ruff reported **All checks passed!**, and `git diff --check` completed without errors.
-The current provenance and pipeline-focused suite reported **175 passed** in 8.02 seconds.
+The full suite in the fresh environment reported **1127 passed, 1 warning in
+117.25s**, with **no skipped tests**. This includes complete d2 analysis, raw d2
+imzML reading, lossless NPZ label verification, input checksum checks, and release
+archive inspection. Ruff reported `All checks passed!`.
 
-The quick-start notebook was executed with the reference-data root set:
+The warning is SciPy's `SparseEfficiencyWarning` about modifying a CSR matrix.
+It is a performance advisory; the run completed and the numerical baselines
+matched. A prior packaging assertion checking a literal configuration string was
+replaced with tests for the actual Cardinal R script in both release archives.
 
-```bash
-JOINT_DATA_ROOT=/Users/mac/Desktop/nanoMap/nanoMAP_figures/Figure5/5B \
-.venv/bin/python - <<'PY'
-import nbformat
-from nbclient import NotebookClient
+## Notebook
 
-path = "examples/joint_quickstart.ipynb"
-notebook = nbformat.read(path, as_version=4)
-NotebookClient(notebook, timeout=1200, kernel_name="python3").execute(cwd="examples")
-PY
-```
+The shipped quickstart was executed with `nbclient` using a standard separate-process
+Jupyter kernel from the fresh virtual environment, with working directory `examples`.
+All four original code cells completed (10.67 seconds), resumed the verified d2
+outputs, and produced the spatial plot. An injected assertion confirmed the kernel
+Python executable. The source notebook remained unchanged and output-free.
+The local kernel emitted a transport advisory; execution exited successfully.
 
-All four code cells executed successfully. The generated `results/` directory was removed
-afterward. The committed notebook intentionally remains without cell outputs or execution counts,
-so it is a clean, executable example.
+## Data and archives
 
-## Reference regression
+The five real d2 payloads total **33,378,796 bytes**. Four are byte-identical copies
+of the supplied source inputs. The cell-label conversion preserves all original
+integer values and the int64 dtype, removes only singleton dimensions, and uses
+NPZ compression. The resulting file is **1,796,694 bytes**, below GitHub's file
+limit. All payload SHA-256 values and conversion provenance are in
+`data/d2/manifest.json`; `.gitattributes` disables Git text conversion for them.
 
-```bash
-JOINT_DATA_ROOT=/Users/mac/Desktop/nanoMap/nanoMAP_figures/Figure5/5B \
-.venv/bin/python -m pytest -m regression tests/regression/test_reference_data.py -v
-```
+The source archive contains the data, example scripts, tests, README, notebook,
+reference configurations, numerical dependency constraints, and CI configuration.
+The wheel contains the library and d2 reference resources. Tests inspect both
+formats and compare every source-archive d2 payload to its checksum manifest.
+The isolated `python -m build --wheel --sdist` command also completed successfully.
+Neither archive includes generated results, the old synthetic fixture, d8
+configurations, development plans, virtual environments, or Python caches.
 
-This command reported **4 passed** in 108.73 seconds, with no failures or skips. The notebook
-reproduction baselines were:
+## Platform scope
 
-| Config | Laser observations | Cell observations |
-| --- | ---: | ---: |
-| `configs/d2.yaml` | 1,480 | 2,936 |
-| `configs/d8.yaml` | 1,640 | 4,986 |
-
-The raw imZML pixel-count checks also passed: d2 = 1,760 and d8 = 1,640.
-
-## Build and installed-package checks
-
-```bash
-env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u http_proxy -u https_proxy -u all_proxy \
-PIP_CONFIG_FILE=/dev/null .venv/bin/python -m build
-```
-
-The isolated build produced `joint_msi-0.1.0.tar.gz` and
-`joint_msi-0.1.0-py3-none-any.whl`.
-
-## Final dependency-resolution verification
-
-The dependency-resolving final-wheel install was rechecked in a fresh Python 3.12 virtual
-environment after adding `numba>=0.60,<0.62` to the runtime metadata:
-
-```bash
-.venv/bin/python -m venv "$FINAL_WHEEL_ENV/venv"
-env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u http_proxy -u https_proxy -u all_proxy \
-PIP_CONFIG_FILE=/dev/null "$FINAL_WHEEL_ENV/venv/bin/python" -m pip install --force-reinstall \
-  dist/joint_msi-0.1.0-py3-none-any.whl
-"$FINAL_WHEEL_ENV/venv/bin/python" -c "import joint; print(joint.__version__)"
-"$FINAL_WHEEL_ENV/venv/bin/python" -m pip check
-PATH="$FINAL_WHEEL_ENV/venv/bin:$PATH" joint --help
-PATH="$FINAL_WHEEL_ENV/venv/bin:$PATH" joint run --help
-```
-
-Dependency resolution selected `numba 0.61.2`, `llvmlite 0.44.0`, and `numpy 2.2.6`, all from
-available Python 3.12 wheels. The install completed; import printed `0.1.0`, `pip check`
-reported **No broken requirements found**, and both CLI help commands exited zero. The installed
-package also exposed all seven published reference resources through `importlib.resources`.
-The verified wheel SHA-256 was
-`ad3e3ecee8304ab502c457aa0fefb7cecddf9ce6ce86b6ef44d9eeeae42dd676`.
+The local evidence is for the macOS/Python 3.12 environment above. GitHub Actions
+is configured for a fresh Ubuntu/Python 3.12 installation, full tests, and the
+d2 figure run; no hosted GitHub execution is claimed before the repository is
+uploaded. Native Windows is not supported because the pipeline uses POSIX file
+APIs; Windows users need WSL2/Linux. Other Python versions, optional R/Cardinal,
+COSG, cNMF, and trajectory integrations were not newly validated by this demo.

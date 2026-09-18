@@ -1,0 +1,23 @@
+# Versions used to validate the real d2 workflow on Python 3.12.
+anndata==0.13.3.post0
+igraph==1.0.0
+leidenalg==0.12.0
+matplotlib==3.11.1
+numba==0.61.2
+numpy==2.2.6
+pandas==3.0.5
+pydantic==2.13.5
+pyimzml==1.5.5
+pyyaml==6.0.3
+scanpy==1.12.4
+scikit-bio==0.7.3
+scikit-image==0.26.0
+scikit-learn==1.9.0
+scipy==1.18.1
+typer==0.27.2
+h5py==3.16.0
+llvmlite==0.44.0
+umap-learn==0.5.12
+pynndescent==0.6.0
+statsmodels==0.15.0
+zarr==3.3.0

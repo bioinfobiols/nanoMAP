@@ -11,6 +11,15 @@
 - `joint.trajectory`: `fit_spatial_trajectory`, `calculate_feature_trends`
 - `joint.pl`: segmentation, registration, spatial-feature, cell-contour, cNMF-usage, and trajectory plots
 - `joint.pipeline`: `JointPipeline`
+- `scripts.run_d2_demo`: `verify_d2_data(data_root=None)`, `run_d2_demo(output_dir=None, overwrite=False)` (keyword-only run arguments; source checkout)
+- `scripts.render_d2_figures`: `render(data_root=None, run_root=None)` (keyword-only arguments; source checkout)
 
-`configs/d2.yaml` reproduces the notebook with `legacy_proportional`. `configs/d8.yaml`
-reproduces the notebook with the default `specificity_filtered` method.
+`configs/d2.yaml` uses the bundled real d2 data with `legacy_proportional` to
+reproduce the notebook. The library also supports `specificity_filtered` for
+other compatible datasets. YAML paths resolve relative to the YAML file.
+
+`read_segmentation` accepts `.npy`, or `.npz` containing exactly one 2-D integer
+array named `labels` (loaded with `allow_pickle=False`). Legacy pickle requires
+explicit `trusted_pickle=True`. No synthetic MSI dataset generator is provided.
+The geometric `simulate_laser_marks` API uses actual MSI coordinates and image
+anchors; it remains available for analytical reconstruction but is not used by d2.
